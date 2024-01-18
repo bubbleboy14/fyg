@@ -1,10 +1,12 @@
 import os
 from .util import read, write
+from .config import config
 
 class MemBank(object):
 	def __init__(self, bank="default"):
+		self.root = config.membank.root
 		self.name = bank
-		self.path = os.path.join(".membank", bank)
+		self.path = os.path.join(self.root, bank)
 		self.bank = {}
 		self.load()
 
@@ -12,13 +14,14 @@ class MemBank(object):
 		print("MemBank(%s)"%(self.name,), *msg)
 
 	def load(self):
-		if not os.path.isdir(".membank"):
-			self.log("load() creating .membank/")
-			movebank = os.path.isfile(".membank")
+		if not os.path.isdir(self.root):
+			self.log("load() creating root", self.root)
+			movebank = os.path.isfile(self.root)
+			rt = movebank and "%s-tmp"%(self.root,)
 			movebank and self.log("load() renaming default")
-			movebank and os.rename(".membank", ".membank-tmp")
-			os.mkdir(".membank")
-			movebank and os.rename(".membank-tmp", os.path.join(".membank", "default"))
+			movebank and os.rename(self.root, rt)
+			os.mkdir(self.root)
+			movebank and os.rename(rt, os.path.join(self.root, "default"))
 		remembered = read(self.path)
 		remembered and self.bank.update(remembered)
 		self.log("loaded", self.name, "bank")
@@ -44,16 +47,21 @@ class MemBank(object):
 
 membanks = {}
 
-def getbank(name="default"):
+def setbank(name=None, root=None):
+	name and config.membank.update("default", name)
+	root and config.membank.update("root", root)
+
+def getbank(name=None):
+	name = name or config.membank.default
 	if name not in membanks:
 		membanks[name] = MemBank(name)
 	return membanks[name]
 
-def remember(key, data, ask=True, bank="default"):
+def remember(key, data, ask=True, bank=None):
 	getbank(bank).remember(data, ask)
 
-def recall(key, bank="default"):
+def recall(key, bank=None):
 	return getbank(bank).recall(key)
 
-def memget(key, default=None, bank="default"):
+def memget(key, default=None, bank=None):
 	return getbank(bank).get(key, default)

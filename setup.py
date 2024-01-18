@@ -7,7 +7,7 @@ setup(
     author_email='mario.balibrera@gmail.com',
     license='MIT License',
     description='FancY confiG',
-    long_description='odds and ends',
+    long_description='FancY confiG: simple classes for managing credentials and configuration',
     packages=[
         'fyg'
     ],

@@ -50,3 +50,10 @@ class Config(object):
 		if key not in self._cfg:
 			self.update(key)
 		return self._cfg.get(key)
+
+config = Config({
+	"membank": {
+		"root": ".membank",
+		"default": "default"
+	}
+})

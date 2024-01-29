@@ -30,7 +30,7 @@ class MemBank(object):
 		if ask and input("remember %s for next time? [Y/n] "%(key,)).lower().startswith("n"):
 			return self.log("ok, not remembering", key)
 		self.bank[key] = data
-		write(self.path, membank)
+		write(self.path, self.bank)
 
 	def recall(self, key):
 		return self.bank.get(key, None)

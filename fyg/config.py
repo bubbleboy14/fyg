@@ -51,6 +51,26 @@ class Config(object):
 			self.update(key)
 		return self._cfg.get(key)
 
+	def cast(self, key, val):
+		oval = self.get(key)
+		t = type(oval)
+		if oval == "auto" or t is bool:
+			if val == "False":
+				return False
+			if val == "True":
+				return True
+			return val
+		return t(val)
+
+	def set(self, ups, autoCast=True):
+		for k, v in ups.items():
+			if type(v) is dict:
+				self.sub(k).set(v, autoCast)
+			else:
+				if autoCast:
+					v = self.cast(k, v)
+				self.update(k, v)
+
 config = Config({
 	"membank": {
 		"root": ".membank",

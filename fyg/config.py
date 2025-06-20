@@ -54,6 +54,8 @@ class Config(object):
 	def cast(self, key, val):
 		oval = self.get(key)
 		t = type(oval)
+		if t == type(val) or oval == None:
+			return val
 		if oval == "auto" or t is bool:
 			if val == "False":
 				return False

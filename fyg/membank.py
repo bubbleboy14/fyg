@@ -1,17 +1,14 @@
 import os
-from .util import read, write
+from .util import read, write, Named
 from .config import config
 
-class MemBank(object):
+class MemBank(Named):
 	def __init__(self, bank="default"):
 		self.root = config.membank.root
 		self.name = bank
 		self.path = os.path.join(self.root, bank)
 		self.bank = {}
 		self.load()
-
-	def log(self, *msg):
-		print("MemBank(%s)"%(self.name,), *msg)
 
 	def load(self):
 		if not os.path.isdir(self.root):

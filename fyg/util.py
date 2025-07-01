@@ -39,3 +39,22 @@ def confirm(condition, assumeYes=False):
         return not resp.startswith("n")
     else:
         return resp.startswith("y")
+
+class Loggy(object):
+    def subsig(self):
+        pass
+
+    def sig(self):
+        ss = self.subsig()
+        sig = self.__class__.__name__
+        return ss and "%s(%s)"%(sig, ss) or sig
+
+    def log(self, *msg):
+        print(self.sig(), ":", *msg)
+
+class Named(Loggy):
+    def __init__(self, name):
+        self.name = name
+
+    def subsig(self):
+        return self.name

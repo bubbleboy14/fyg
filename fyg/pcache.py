@@ -5,10 +5,10 @@ from .util import read, write
 class PCache(object):
 	def __init__(self, cfg):
 		self.fname = cfg
-		self._cache = read(cfg) or {}
+		self._cache = read(cfg, isjson=True, default={}, b64=True)
 
 	def _save(self):
-		write(self.fname, self._cache)
+		write(self._cache, self.fname, isjson=True, b64=True)
 
 	def __call__(self, key, password=True, overwrite=False):
 		dk = b64encode(key.encode()).decode()

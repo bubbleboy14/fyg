@@ -19,7 +19,7 @@ class MemBank(Named):
 			movebank and os.rename(self.root, rt)
 			os.mkdir(self.root)
 			movebank and os.rename(rt, os.path.join(self.root, "default"))
-		remembered = read(self.path)
+		remembered = read(self.path, isjson=True, b64=True)
 		remembered and self.bank.update(remembered)
 		self.log("loaded", self.name, "bank")
 
@@ -27,7 +27,7 @@ class MemBank(Named):
 		if ask and input("remember %s for next time? [Y/n] "%(key,)).lower().startswith("n"):
 			return self.log("ok, not remembering", key)
 		self.bank[key] = data
-		write(self.path, self.bank)
+		write(self.bank, self.path, isjson=True, b64=True)
 
 	def recall(self, key):
 		return self.bank.get(key, None)

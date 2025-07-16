@@ -9,7 +9,8 @@ setup(
     description='FancY confiG',
     long_description='FancY confiG: simple classes for managing credentials and configuration',
     packages=[
-        'fyg'
+        'fyg',
+        'fyg.util'
     ],
     zip_safe = False,
     install_requires = [

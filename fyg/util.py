@@ -40,6 +40,13 @@ def confirm(condition, assumeYes=False):
     else:
         return resp.startswith("y")
 
+def batch(dlist, f, *args, **kwargs):
+    chunk = kwargs.pop("chunk", 1000)
+    i = 0
+    while i < len(dlist):
+        f(dlist[i:i+chunk], *args, **kwargs)
+        i += chunk
+
 class Loggy(object):
     def subsig(self):
         pass

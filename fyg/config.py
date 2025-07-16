@@ -77,5 +77,11 @@ config = Config({
 	"membank": {
 		"root": ".membank",
 		"default": "default"
+	},
+	"log": {
+		"deep": False,
+		"flush": False,
+		"timestamp": True,
+		"allow": ["info", "log", "warn", "error"] # access,info,log,warn,error,detail,db,query,kernel
 	}
 })

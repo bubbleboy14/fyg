@@ -51,6 +51,9 @@ def deeplog(group, sub):
         DLZ[group][sub] = open(fullp, "a")
     return DLZ[group][sub]
 
+def basiclog(*msg):
+    log(" ".join([str(m) for m in msg]))
+
 def log(msg, level=0, important=False, group=None, sub=None):
     from ..config import config
     lcfg = config.log

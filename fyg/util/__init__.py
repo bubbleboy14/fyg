@@ -1,6 +1,6 @@
 import os
 from .io import read, write, writejson, ask, confirm, selnum
-from .reporting import start_timer, end_timer, set_log, close_log, closedeeps, deeplog, log, set_error, error
+from .reporting import start_timer, end_timer, set_log, close_log, closedeeps, deeplog, basiclog, log, set_error, error
 
 def rm(pname):
     if os.path.islink(pname):
@@ -37,7 +37,7 @@ class Loggy(object):
         return ss and "%s(%s)"%(sig, ss) or sig
 
     def log(self, *msg):
-        print(self.sig(), ":", *msg)
+        basiclog(self.sig(), ":", *msg)
 
 class Named(Loggy):
     def __init__(self, name):

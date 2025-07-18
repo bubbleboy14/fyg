@@ -2,4 +2,4 @@
 
 FancY confiG
 
-v0.1.7.1
+v0.1.7.2

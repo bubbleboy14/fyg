@@ -14,7 +14,7 @@ setup(
     ],
     zip_safe = False,
     install_requires = [
-
+        "dotenv >= 1.1.1"
     ],
     entry_points = '''''',
     classifiers = [

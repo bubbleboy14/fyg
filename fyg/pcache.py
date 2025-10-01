@@ -1,4 +1,4 @@
-import getpass, dotenv
+import getpass
 from base64 import b64encode, b64decode
 from .util import read, write, confirm, error
 from .config import config
@@ -22,7 +22,8 @@ class PCache(object):
 		if not denvkey:
 			error('"%s" not in dotenv map!'%(key,))
 		if not hasattr(self, "_demap"):
-			self._demap = dotenv.dotenv_values()
+			from dotenv import dotenv_values
+			self._demap = dotenv_values()
 		if denvkey not in self._demap:
 			error("'%s' not in env!"%(denvkey,))
 		return self._demap[denvkey]

@@ -17,6 +17,10 @@ class PCache(object):
 	def _save(self):
 		write(self._cache, self.fname, isjson=True, b64=True)
 
+	def withdot(self, demap, devals):
+		config.update("dotenv", demap)
+		self._demap = devals
+
 	def _denv(self, key):
 		denvkey = config.dotenv[key]
 		if not denvkey:

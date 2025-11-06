@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='fyg',
-    version="0.1.7.6",
+    version="0.1.7.7",
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',

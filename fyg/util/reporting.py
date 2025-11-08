@@ -4,6 +4,7 @@ from datetime import datetime
 LOG_FILE = None
 ERROR_CB = None
 TIME_CBS = {}
+ON_LOG = []
 
 def start_timer(tname):
     TIME_CBS[tname] = datetime.now()
@@ -15,6 +16,9 @@ def end_timer(tname, msg=""):
 def set_log(fname):
     global LOG_FILE
     LOG_FILE = open(fname, "a")
+
+def on_log(cb):
+    ON_LOG.append(cb)
 
 def close_log():
     global LOG_FILE
@@ -70,6 +74,8 @@ def log(msg, level=0, important=False, group=None, sub=None):
         dl = deeplog(group, sub)
         dl.write(ws)
         lcfg.flush and dl.flush()
+    for cb in ON_LOG:
+        cb(s)
     print(s)
 
 def set_error(f):

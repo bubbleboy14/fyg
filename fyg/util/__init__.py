@@ -1,6 +1,6 @@
 import os
 from .io import read, write, writejson, ask, confirm, selnum
-from .reporting import start_timer, end_timer, set_log, close_log, closedeeps, deeplog, basiclog, log, set_error, error
+from .reporting import start_timer, end_timer, set_log, on_log, close_log, closedeeps, deeplog, basiclog, log, set_error, error
 
 def rm(pname):
     if os.path.islink(pname):

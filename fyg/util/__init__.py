@@ -1,4 +1,4 @@
-import os
+import os, subprocess, platform
 from .io import read, write, writejson, ask, confirm, selnum
 from .reporting import start_timer, end_timer, set_log, on_log, close_log, closedeeps, deeplog, basiclog, log, set_error, error
 
@@ -26,6 +26,50 @@ def batch(dlist, f, *args, **kwargs):
     while i < len(dlist):
         f(dlist[i:i+chunk], *args, **kwargs)
         i += chunk
+
+def sudoed(cline, sudo=False):
+    if sudo and platform.system() != "Windows" and os.geteuid(): # !root
+        cline = "sudo %s"%(cline,)
+    return cline
+
+def cmd(cline, sudo=False, silent=False):
+    cline = sudoed(cline, sudo)
+    silent or log('issuing command: "%s"'%(cline,), 2)
+    subprocess.call(cline, shell=True)
+
+def output(cline, sudo=False, silent=False, loud=False):
+    cline = sudoed(cline, sudo)
+    silent or log('getting output for: "%s"'%(cline,), 2)
+    output = subprocess.getoutput(cline)
+    loud and log(output)
+    return output
+
+def pcount(pname):
+    log("checking count: %s"%(pname,), important=True)
+    num = int(output("ps -ef | grep %s | egrep -v 'screener|pcount|grep' | wc -l"%(pname,)))
+    log("%s count: %s"%(pname, num), 1)
+    return num
+
+def pcheck(pname, target, starter):
+    if target and pcount(pname) != target:
+        log("not enough %s processes - restarting screen!"%(pname,), 1)
+        log(output("screen -Q windows"), important=True)
+        cmd("killall screen; %s"%(starter,))
+        return True
+
+def pkill(pname, force=False):
+    pblock = output("ps -ef | grep %s | egrep -v 'screener|pkill|grep'"%(pname,))
+    if not pblock:
+        log("no '%s' processes!"%(pname,))
+    else:
+        plines = pblock.split("\n")
+        log("found %s '%s' processes"%(len(plines), pname), important=True)
+        if plines:
+            procs = [[w for w in line.split(" ") if w][1] for line in plines]
+            if force or confirm("kill %s '%s' processes"%(len(procs), pname)):
+                for proc in procs:
+                    cmd("kill -9 %s"%(proc,))
+    log("goodbye")
 
 class Loggy(object):
     def subsig(self):

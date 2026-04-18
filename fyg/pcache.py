@@ -39,7 +39,7 @@ class PCache(object):
 	def __call__(self, key, password=True, overwrite=False):
 		dk = self._enc(key)
 		if overwrite or dk not in self._cache:
-			if config.dotenv: # non-interactive!
+			if config.dotenv and not overwrite: # non-interactive!
 				return self._denv(key)
 			else: # normal
 				p = (password and getpass.getpass or input)(key)

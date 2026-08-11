@@ -1,4 +1,4 @@
-import json, pprint, base64
+import os, json, pprint, base64
 
 def read(fname="_tmp", lines=False, isjson=False, default=None, binary=False, b64=False):
     try:
@@ -28,8 +28,12 @@ def read(fname="_tmp", lines=False, isjson=False, default=None, binary=False, b6
             return default
     return text
 
-def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False, append=False, newline=False, b64=False):
-    f = open(fname, append and "a" or binary and "wb" or "w")
+def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False, append=False, newline=False, b64=False, atomic=False):
+    if atomic and append:
+        print("write() disabling atomic in append mode!")
+        atomic = False
+    filename = "%s_tmp"%(fname,) if atomic else fname
+    f = open(filename, append and "a" or binary and "wb" or "w")
     wdata = isjson and (ispretty and pprint.pformat(data) or json.dumps(data)) or data
     if b64:
         wdata = base64.b64encode(wdata.encode()).decode()
@@ -37,6 +41,8 @@ def write(data, fname="_tmp", isjson=False, ispretty=False, binary=False, append
     if newline:
         f.write("\n")
     f.close()
+    if atomic:
+        os.replace(filename, fname)
 
 def writejson(data, fname): # fname doesn't include .json extension
     write(data, "%s.json"%(fname,), True)

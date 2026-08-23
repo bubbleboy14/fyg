@@ -55,10 +55,10 @@ def deeplog(group, sub):
         DLZ[group][sub] = open(fullp, "a")
     return DLZ[group][sub]
 
-def basiclog(*msg):
-    log(" ".join([str(m) for m in msg]))
+def basiclog(*msg, **kwargs):
+    log(" ".join([str(m) for m in msg]), **kwargs)
 
-def log(msg, level=0, important=False, group=None, sub=None):
+def log(msg, level=0, important=False, group=None, sub=None, flush=False):
     from ..config import config
     lcfg = config.log
     s = "%s%s"%("  " * level, msg)
@@ -76,7 +76,7 @@ def log(msg, level=0, important=False, group=None, sub=None):
         lcfg.flush and dl.flush()
     for cb in ON_LOG:
         cb(s)
-    print(s)
+    print(s, flush=flush)
 
 def set_error(f):
     global ERROR_CB

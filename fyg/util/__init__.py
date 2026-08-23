@@ -80,8 +80,8 @@ class Loggy(object):
         sig = self.__class__.__name__
         return ss and "%s(%s)"%(sig, ss) or sig
 
-    def log(self, *msg):
-        basiclog(self.sig(), ":", *msg)
+    def log(self, *msg, **kwargs):
+        basiclog(self.sig(), ":", *msg, **kwargs)
 
 class Named(Loggy):
     def __init__(self, name):

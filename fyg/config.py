@@ -81,6 +81,7 @@ config = Config({
 	"log": {
 		"deep": False,
 		"flush": False,
+		"rotating": False,
 		"timestamp": True,
 		"allow": ["info", "log", "warn", "error"] # access,info,log,warn,error,detail,db,query,kernel
 	}

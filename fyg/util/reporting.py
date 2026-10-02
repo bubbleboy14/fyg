@@ -1,10 +1,36 @@
 import os, sys
 from datetime import datetime
+from ..config import config
 
-LOG_FILE = None
+LOGGER = None
 ERROR_CB = None
 TIME_CBS = {}
 ON_LOG = []
+
+class Logger(object):
+    def __init__(self, path):
+        self.path = path
+        self.open()
+
+    def open(self):
+        self.handle = open(self.path, "a")
+        self.inode = os.fstat(self.handle.fileno()).st_ino
+
+    def close(self):
+        if self.handle:
+            self.handle.close()
+            self.handle = None
+
+    def stale(self):
+        if not os.path.exists(self.path):
+            return True
+        return os.stat(self.path).st_ino != self.inode
+
+    def get(self):
+        if config.log.rotating and self.stale():
+            self.close()
+            self.open()
+        return self.handle
 
 def start_timer(tname):
     TIME_CBS[tname] = datetime.now()
@@ -14,18 +40,20 @@ def end_timer(tname, msg=""):
     log("[timer] Completed in %s |%s| %s"%(diff, msg, tname), important=True)
 
 def set_log(fname):
-    global LOG_FILE
-    LOG_FILE = open(fname, "a")
+    global LOGGER
+    LOGGER = Logger(fname)
+
+def get_log():
+    return LOGGER and LOGGER.get()
 
 def on_log(cb):
     ON_LOG.append(cb)
 
 def close_log():
-    global LOG_FILE
-    from ..config import config
-    if LOG_FILE:
-        LOG_FILE.close()
-        LOG_FILE = None
+    global LOGGER
+    if LOGGER:
+        LOGGER.close()
+        LOGGER = None
     config.log.deep and closedeeps()
 
 DLZ = {}
@@ -59,7 +87,6 @@ def basiclog(*msg, **kwargs):
     log(" ".join([str(m) for m in msg]), **kwargs)
 
 def log(msg, level=0, important=False, group=None, sub=None, flush=False):
-    from ..config import config
     lcfg = config.log
     s = "%s%s"%("  " * level, msg)
     if lcfg.timestamp:
@@ -67,9 +94,10 @@ def log(msg, level=0, important=False, group=None, sub=None, flush=False):
     if important:
         s = "\n%s"%(s,)
     ws = "%s\n"%(s,)
-    if LOG_FILE:
-        LOG_FILE.write(ws)
-        lcfg.flush and LOG_FILE.flush()
+    logger = get_log()
+    if logger:
+        logger.write(ws)
+        lcfg.flush and logger.flush()
     if group and sub and lcfg.deep:
         dl = deeplog(group, sub)
         dl.write(ws)
